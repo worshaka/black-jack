@@ -1,4 +1,4 @@
-package org.worshaka;
+package org.worshaka.blackjack.core;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package org.worshaka;
+package org.worshaka.blackjack.core;
 
 import java.util.Random;
 

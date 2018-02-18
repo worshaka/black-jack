@@ -1,6 +1,7 @@
-package org.worshaka;
+package org.worshaka.blackjack.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Player {
@@ -28,8 +29,8 @@ public class Player {
         return cards.stream().mapToInt(Integer::intValue).sum();
     }
 
-    public String getHand() {
-        return cards.toString();
+    public List<Integer> getHand() {
+        return Collections.unmodifiableList(cards);
     }
 
     public void startNewHand() {
@@ -38,5 +39,9 @@ public class Player {
 
     public int getNumberOfCardsInHand() {
         return cards.size();
+    }
+
+    public boolean hasBusted() {
+        return getTotalCardValue() > 21;
     }
 }
