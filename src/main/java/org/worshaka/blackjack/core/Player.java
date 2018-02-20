@@ -6,17 +6,7 @@ import java.util.List;
 
 public class Player {
 
-    private String displayName = null;
     private List<Integer> cards = new ArrayList<>();
-
-
-    public Player(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
 
     public void hit(int cardValue) {
         if (getTotalCardValue() > 21) {
@@ -33,7 +23,7 @@ public class Player {
         return Collections.unmodifiableList(cards);
     }
 
-    public void startNewHand() {
+    public void clearHand() {
         cards = new ArrayList<>();
     }
 

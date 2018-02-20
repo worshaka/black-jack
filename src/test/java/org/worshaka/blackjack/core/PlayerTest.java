@@ -11,7 +11,7 @@ public class PlayerTest {
     @DisplayName("should get a total card value equal to all hits")
     @Test
     public void shouldGetTotalCardValueEqualToAllHits() {
-        Player player = new Player("name");
+        Player player = new Player();
         player.hit(10);
         player.hit(11);
         assertEquals(21, player.getTotalCardValue());
@@ -20,7 +20,7 @@ public class PlayerTest {
     @DisplayName("should throw an IllegalStateException if trying to hit a player who has busted already")
     @Test
     public void shouldNotBeAbleToHitIfPlayerHasBusted() {
-        Player player = new Player("name");
+        Player player = new Player();
         player.hit(11);
         player.hit(11);
         assertThrows(IllegalStateException.class, () -> player.hit(1));
@@ -29,17 +29,17 @@ public class PlayerTest {
     @DisplayName("should have no cards in hand when starting a new hand")
     @Test
     public void shouldHaveNoCardsInHandWhenStartingNewGame() {
-        Player player = new Player("name");
+        Player player = new Player();
         player.hit(11);
         player.hit(1);
-        player.startNewHand();
+        player.clearHand();
         assertEquals(0, player.getNumberOfCardsInHand());
     }
 
     @DisplayName("should return the correct number of cards in hand")
     @Test
     public void shouldReturnTheCorrectNumberOfCardsInHand() {
-        Player player = new Player("name");
+        Player player = new Player();
         player.hit(1);
         player.hit(1);
         player.hit(1);

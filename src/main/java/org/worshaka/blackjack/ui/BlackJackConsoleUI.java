@@ -13,7 +13,7 @@ public class BlackJackConsoleUI implements BlackJackUI {
     public void displayBeginDealerTurn(PlayerState dealer) {
         System.out.println("Okay, dealer's turn.");
         System.out.printf("His hidden card was a %d%n", dealer.getLastDealtCard());
-        System.out.printf("His total was %d%n%n", dealer.getTotal());
+        System.out.printf("His total was %d%n%n", dealer.getPointTotal());
     }
 
     @Override
@@ -59,13 +59,13 @@ public class BlackJackConsoleUI implements BlackJackUI {
     public void displayResultOfDealerHit(PlayerState dealer) {
         System.out.println("Dealer chooses to hit.");
         System.out.printf("He drew a %s%n", dealer.getLastDealtCard());
-        System.out.printf("His total is %s%n%n", dealer.getTotal());
+        System.out.printf("His total is %s%n%n", dealer.getPointTotal());
     }
 
     @Override
     public void displayResultOfPlayerHit(PlayerState player) {
         System.out.printf("You drew a %s%n", player.getLastDealtCard());
-        System.out.printf("Your total is %s%n%n", player.getTotal());
+        System.out.printf("Your total is %s%n%n", player.getPointTotal());
     }
 
     @Override
@@ -94,14 +94,14 @@ public class BlackJackConsoleUI implements BlackJackUI {
         if (playerState.hasBusted()) {
             System.out.printf("%s has busted.%n", name);
         } else {
-            System.out.printf("%s total is %d%n", name, playerState.getTotal());
+            System.out.printf("%s total is %d%n", name, playerState.getPointTotal());
         }
     }
 
     private void displayPlayerOpeningHand(PlayerState player) {
         List<Integer> playerHand = player.getHand();
         System.out.printf("You get a %d and a %d.%n", playerHand.get(0), playerHand.get(1));
-        System.out.printf("Your total is %d.%n%n", player.getTotal());
+        System.out.printf("Your total is %d.%n%n", player.getPointTotal());
     }
 
     private void displayDealerOpeningHand(PlayerState dealer) {
