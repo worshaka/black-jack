@@ -3,37 +3,78 @@ package org.worshaka.blackjack.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 public class BlackJackConsoleUI implements BlackJackUI {
 
     private BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
     @Override
-    public String getPlayerName() {
-        System.out.println("Please enter your name");
+    public void displayBeginDealerTurn(PlayerState dealer) {
+        System.out.println("Okay, dealer's turn.");
+        System.out.printf("His hidden card was a %d%n", dealer.getLastDealtCard());
+        System.out.printf("His total was %d%n%n", dealer.getTotal());
+    }
+
+    @Override
+    public void displayDealerStays() {
+        System.out.println("Dealer stays.");
+        System.out.println();
+    }
+
+    @Override
+    public void displayGameFinished() {
+        System.out.println("Thank you for playing");
+    }
+
+    @Override
+    public void displayHandResult(GameState gameState, HandResult handResult) {
+        displayFinalHands(gameState);
+        switch (handResult) {
+            case TIE:
+                System.out.println("GAME TIED!!!");
+                break;
+            case PLAYER_WINS:
+                System.out.println("YOU WIN!!!");
+                break;
+            case DEALER_WINS:
+                System.out.println("DEALER WINS!!!");
+        }
+        System.out.println();
+    }
+
+    @Override
+    public void displayOpeningHands(GameState gameState) {
+        displayPlayerOpeningHand(gameState.getPlayerState());
+        displayDealerOpeningHand(gameState.getDealerState());
+    }
+
+    @Override
+    public void displayOpeningTitle() {
+        System.out.println();
+        System.out.println("Welcome to Black Jack!");
+    }
+
+    @Override
+    public void displayResultOfDealerHit(PlayerState dealer) {
+        System.out.println("Dealer chooses to hit.");
+        System.out.printf("He drew a %s%n", dealer.getLastDealtCard());
+        System.out.printf("His total is %s%n%n", dealer.getTotal());
+    }
+
+    @Override
+    public void displayResultOfPlayerHit(PlayerState player) {
+        System.out.printf("You drew a %s%n", player.getLastDealtCard());
+        System.out.printf("Your total is %s%n%n", player.getTotal());
+    }
+
+    @Override
+    public boolean hasPlayerHit() {
+        System.out.println("Would you like to \"hit\" or \"stay\"?");
         printCommandPrompt();
-        return readLine();
-    }
-
-    @Override
-    public boolean askPlayerHitOrStay() {
-        System.out.println("Would you like to hit or stay? [Hit/Stay]");
-        printCommandPrompt();
-        return readLine().toLowerCase().startsWith("h");
-    }
-
-    @Override
-    public void displayHands(GameState gameState) {
-        PlayerState dealer = gameState.getDealerState();
-        PlayerState player = gameState.getPlayerState();
-        System.out.printf("%s -> Cards: %s%n", dealer.getDisplayName(), dealer.getHand());
-        System.out.printf("%s -> Cards: %s%n", player.getDisplayName(), player.getHand());
-    }
-
-    @Override
-    public void displayPlayerBusted(String displayName) {
-        System.out.printf("%s has busted!!!%n", displayName);
-        System.out.println("You LOSE...");
+        boolean hasHit = readLine().toLowerCase().startsWith("h");
+        System.out.println();
+        return hasHit;
     }
 
     @Override
@@ -43,28 +84,30 @@ public class BlackJackConsoleUI implements BlackJackUI {
         return readLine().toLowerCase().startsWith("y");
     }
 
-    @Override
-    public void displayResult(GameState gameState) {
-        PlayerState player = gameState.getPlayerState();
-        PlayerState dealer = gameState.getDealerState();
-        System.out.printf("%s Wins!!!%n", (gameState.hasPlayerWon()) ? player.getDisplayName() : dealer.getDisplayName());
-        displayHands(gameState);
+    private void displayFinalHands(GameState gameState) {
+        displayFinalHand("Dealer", gameState.getDealerState());
+        displayFinalHand("Player", gameState.getPlayerState());
+        System.out.println();
     }
 
-    @Override
-    public void displayGameFinished() {
-        System.out.println("Thank you for playing");
+    private void displayFinalHand(String name, PlayerState playerState) {
+        if (playerState.hasBusted()) {
+            System.out.printf("%s has busted.%n", name);
+        } else {
+            System.out.printf("%s total is %d%n", name, playerState.getTotal());
+        }
     }
 
-    @Override
-    public void displayOpeningTitle() {
-        System.out.println("Welcome to Black Jack!");
+    private void displayPlayerOpeningHand(PlayerState player) {
+        List<Integer> playerHand = player.getHand();
+        System.out.printf("You get a %d and a %d.%n", playerHand.get(0), playerHand.get(1));
+        System.out.printf("Your total is %d.%n%n", player.getTotal());
     }
 
-    @Override
-    public void displayDealerHasBusted(String displayName) {
-        System.out.printf("%s has busted!!!%n", displayName);
-        System.out.println("You Win.");
+    private void displayDealerOpeningHand(PlayerState dealer) {
+        System.out.printf("The dealer has a %d showing, and a hidden card.%n", dealer.getHand().get(0));
+        System.out.println("His total is hidden, too.");
+        System.out.println();
     }
 
     private void printCommandPrompt() {

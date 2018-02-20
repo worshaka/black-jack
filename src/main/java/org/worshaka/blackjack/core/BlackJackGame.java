@@ -3,11 +3,14 @@ package org.worshaka.blackjack.core;
 import org.worshaka.blackjack.ui.BlackJackUI;
 import org.worshaka.blackjack.ui.GameState;
 import org.worshaka.blackjack.ui.PlayerState;
+import org.worshaka.blackjack.ui.HandResult;
 
-public class BlackJackGame implements  Runnable {
+import static org.worshaka.blackjack.ui.HandResult.*;
 
-    private Player dealer = new Player("Dealer");;
-    private Player player = null;
+public class BlackJackGame implements Runnable {
+
+    private Player dealer = new Player("Dealer");
+    private Player player = new Player("Player");
     private Deck deck = new Deck();
     private BlackJackUI blackJackUI;
 
@@ -15,29 +18,37 @@ public class BlackJackGame implements  Runnable {
         this.blackJackUI = blackJackUI;
     }
 
-    public void initGame() {
+    private void initGame() {
         blackJackUI.displayOpeningTitle();
-        String playerName = blackJackUI.getPlayerName();
-        player = new Player(playerName);
     }
 
     @Override
     public void run() {
+        initGame();
         do {
             dealOpeningHand();
-            blackJackUI.displayHands(getGameState());
             playerTurn();
-            if (player.hasBusted()) {
-                blackJackUI.displayPlayerBusted(player.getDisplayName());
-            }
             dealerTurn();
-            if (dealer.hasBusted()) {
-                blackJackUI.displayDealerHasBusted(dealer.getDisplayName());
-            } else {
-                blackJackUI.displayResult(getGameState());
-            }
+            displayResult();
         } while (blackJackUI.shouldDealAnotherHand());
+
         blackJackUI.displayGameFinished();
+    }
+
+    private void displayResult() {
+        HandResult handResult = null;
+        if (player.hasBusted() && dealer.hasBusted()) {
+            handResult = TIE;
+        } else if (dealer.hasBusted()) {
+            handResult = PLAYER_WINS;
+        } else if (player.hasBusted()) {
+            handResult = DEALER_WINS;
+        } else if (dealer.getTotalCardValue() >= player.getTotalCardValue()) {
+            handResult = DEALER_WINS;
+        } else {
+            handResult = PLAYER_WINS;
+        }
+        blackJackUI.displayHandResult(getGameState(), handResult);
     }
 
     private void dealOpeningHand() {
@@ -47,31 +58,34 @@ public class BlackJackGame implements  Runnable {
             player.hit(deck.getNextCard());
             dealer.hit(deck.getNextCard());
         }
+        blackJackUI.displayOpeningHands(getGameState());
     }
 
     private void playerTurn() {
-        while (player.getTotalCardValue() < 21) {
-            boolean hasHit = blackJackUI.askPlayerHitOrStay();
-            if (!hasHit) {
+        while (blackJackUI.hasPlayerHit()) {
+            player.hit(deck.getNextCard());
+            blackJackUI.displayResultOfPlayerHit(getGameState().getPlayerState());
+            if (player.hasBusted()) {
                 return;
             }
-            player.hit(deck.getNextCard());
-            blackJackUI.displayHands(getGameState());
         }
     }
 
     private void dealerTurn() {
+        blackJackUI.displayBeginDealerTurn(getGameState().getDealerState());
         while (dealer.getTotalCardValue() < 17) {
             dealer.hit(deck.getNextCard());
-            blackJackUI.displayHands(getGameState());
+            blackJackUI.displayResultOfDealerHit(getGameState().getDealerState());
+        }
+        if (!dealer.hasBusted()) {
+            blackJackUI.displayDealerStays();
         }
     }
 
     private GameState getGameState() {
         return new GameState(
-                new PlayerState(player.getDisplayName(), player.getHand(), player.getTotalCardValue()),
-                new PlayerState(dealer.getDisplayName(), dealer.getHand(), dealer.getTotalCardValue()),
-                player.getTotalCardValue() > dealer.getTotalCardValue()
+                new PlayerState(player.getDisplayName(), player.getHand(), player.getTotalCardValue(), player.hasBusted()),
+                new PlayerState(dealer.getDisplayName(), dealer.getHand(), dealer.getTotalCardValue(), dealer.hasBusted())
         );
     }
 }

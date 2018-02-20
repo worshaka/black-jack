@@ -2,21 +2,23 @@ package org.worshaka.blackjack.ui;
 
 public interface BlackJackUI {
 
-    boolean askPlayerHitOrStay();
+    void displayBeginDealerTurn(PlayerState dealer);
 
-    void displayHands(GameState gameState);
-
-    void displayPlayerBusted(String displayName);
-
-    boolean shouldDealAnotherHand();
-
-    void displayResult(GameState gameState);
+    void displayDealerStays();
 
     void displayGameFinished();
 
-    String getPlayerName();
+    void displayHandResult(GameState gameState, HandResult handResult);
+
+    void displayOpeningHands(GameState gameState);
 
     void displayOpeningTitle();
 
-    void displayDealerHasBusted(String displayName);
+    void displayResultOfDealerHit(PlayerState dealerState);
+
+    void displayResultOfPlayerHit(PlayerState player);
+
+    boolean hasPlayerHit();
+
+    boolean shouldDealAnotherHand();
 }
