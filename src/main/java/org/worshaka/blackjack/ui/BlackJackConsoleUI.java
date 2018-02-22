@@ -24,7 +24,7 @@ public class BlackJackConsoleUI implements BlackJackUI {
 
     @Override
     public void displayGameFinished() {
-        System.out.println("Thank you for playing");
+        System.out.println("Thank you for playing.");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class BlackJackConsoleUI implements BlackJackUI {
     @Override
     public void displayOpeningTitle() {
         System.out.println();
-        System.out.println("Welcome to Black Jack!");
+        System.out.println("Welcome to Travis' blackjack program!");
     }
 
     @Override
